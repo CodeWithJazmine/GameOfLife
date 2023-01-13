@@ -81,6 +81,7 @@ namespace GOLProject
 
             // Update status strip generations
             toolStripStatusLabelGenerations.Text = "Generations = " + generations.ToString();
+            graphicsPanel1.Invalidate();
         }
 
         // The event called by the timer every Interval milliseconds.
@@ -226,6 +227,7 @@ namespace GOLProject
             return count;
         }
 
+        // Buttons and Menu Items
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.Close();
@@ -260,6 +262,8 @@ namespace GOLProject
                 }
             }
 
+            generations = 0;
+
             graphicsPanel1.Invalidate();
         }
 
@@ -273,6 +277,8 @@ namespace GOLProject
                     universe[x, y] = false;
                 }
             }
+
+            generations = 0;
 
             graphicsPanel1.Invalidate();
         }
