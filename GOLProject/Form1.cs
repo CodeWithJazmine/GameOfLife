@@ -92,7 +92,6 @@ namespace GOLProject
 
         private void graphicsPanel1_Paint(object sender, PaintEventArgs e)
         {
-            //----- CHANGE TO FLOATS
 
             // Calculate the width and height of each cell in pixels
             // CELL WIDTH = WINDOW WIDTH / NUMBER OF CELLS IN X
@@ -228,29 +227,35 @@ namespace GOLProject
         }
 
         // Buttons and Menu Items
+
+        // Exit
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
+        // Start
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
             timer.Enabled = true;
             graphicsPanel1.Invalidate();
         }
 
+        // Pause
         private void toolStripButton2_Click(object sender, EventArgs e)
         {
             timer.Enabled = false;
             graphicsPanel1.Invalidate();
         }
 
+        // Next Generation
         private void toolStripButton3_Click(object sender, EventArgs e)
         {
             NextGeneration();
             graphicsPanel1.Invalidate();
         }
 
+        // New/Reset
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
         {
             for (int y = 0; y < universe.GetLength(1); y++)
