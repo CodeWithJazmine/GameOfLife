@@ -7,10 +7,10 @@ namespace GOLProject
     public partial class Form1 : Form
     {
         // The universe array
-        bool[,] universe = new bool[10, 10];
+        bool[,] universe = new bool[20, 20];
 
         // The scratchpad array
-        bool[,] scratchpad = new bool[10, 10];
+        bool[,] scratchpad = new bool[20, 20];
 
         // Drawing colors
         Color gridColor = Color.Black;
@@ -160,7 +160,7 @@ namespace GOLProject
             }
         }
 
-        // Count Neighbors
+        // Count Neighbors Finite
         private int CountNeighborsFinite(int x, int y)
         {
             int count = 0;
@@ -194,6 +194,7 @@ namespace GOLProject
             return count;
         }
 
+        // Count Neighbors Toroidal
         private int CountNeighborsToroidal(int x, int y)
         {
             int count = 0;
@@ -273,5 +274,45 @@ namespace GOLProject
             graphicsPanel1.Invalidate();
         }
 
+        // Background Color
+        private void backColorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ColorDialog colorDialog = new ColorDialog();
+
+            colorDialog.Color = graphicsPanel1.BackColor;
+
+            if (DialogResult.OK == colorDialog.ShowDialog())
+            {
+                graphicsPanel1.BackColor = colorDialog.Color;
+                graphicsPanel1.Invalidate();
+            }
+
+        }
+        // Cell Color
+        private void cellColorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ColorDialog colorDialog = new ColorDialog();
+
+            colorDialog.Color = cellColor;
+
+            if (DialogResult.OK == colorDialog.ShowDialog())
+            {
+                cellColor = colorDialog.Color;
+                graphicsPanel1.Invalidate();
+            }
+        }
+
+        private void gridColorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ColorDialog colorDialog = new ColorDialog();
+
+            colorDialog.Color = gridColor;
+
+            if (DialogResult.OK == colorDialog.ShowDialog())
+            {
+                gridColor = colorDialog.Color;
+                graphicsPanel1.Invalidate();
+            }
+        }
     }
 }
