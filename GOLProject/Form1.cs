@@ -260,6 +260,8 @@ namespace GOLProject
         // New/Reset
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            timer.Enabled = false;
+
             for (int y = 0; y < universe.GetLength(1); y++)
             {
                 // Iterate through the universe in the x, left to right
