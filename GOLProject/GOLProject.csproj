@@ -88,9 +88,6 @@
     <None Include="Resources\StartButton.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Pause.png" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\NextButton.png" />
   </ItemGroup>
   <ItemGroup>
