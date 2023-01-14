@@ -316,5 +316,22 @@ namespace GOLProject
                 graphicsPanel1.Invalidate();
             }
         }
+
+        // Grid 
+        private void gridToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        //Options Menu
+        private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Options opt = new Options();
+
+            if (DialogResult.OK == opt.ShowDialog())
+            {
+
+            }
+        }
     }
 }
