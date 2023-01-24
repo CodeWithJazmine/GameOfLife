@@ -101,6 +101,7 @@ namespace GOLProject
 
             // Update status strip generations
             toolStripStatusLabelGenerations.Text = "Generations = " + generations.ToString();
+            toolStripStatusLabelAlive.Text = "Alive= " + CellCount().ToString();
             graphicsPanel1.Invalidate();
         }
 
@@ -188,6 +189,7 @@ namespace GOLProject
                 universe[(int)x, (int)y] = !universe[(int)x, (int)y];
 
                 // Tell Windows you need to repaint
+                toolStripStatusLabelAlive.Text = "Alive= " + CellCount().ToString();
                 graphicsPanel1.Invalidate();
             }
         }
@@ -228,6 +230,7 @@ namespace GOLProject
                 }
             }
             return count;
+
         }
 
         // Count Neighbors Toroidal
@@ -260,6 +263,23 @@ namespace GOLProject
                         yCheck = 0;
                     if (universe[xCheck, yCheck] == true)
                         count++;
+                }
+            }
+            return count;
+        }
+
+        // Alive cell count
+        private int CellCount()
+        {
+            int count = 0;
+            for (int y = 0; y < universe.GetLength(1); y++)
+            {
+                for (int x = 0; x < universe.GetLength(0); x++)
+                {
+                    if (universe[x, y] == true)
+                    {
+                        count++;
+                    }
                 }
             }
             return count;
@@ -312,6 +332,7 @@ namespace GOLProject
 
             generations = 0;
             toolStripStatusLabelGenerations.Text = "Generations = " + generations.ToString();
+            toolStripStatusLabelAlive.Text = "Alive= " + CellCount().ToString();
             graphicsPanel1.Invalidate();
         }
 
@@ -360,20 +381,6 @@ namespace GOLProject
             }
         }
 
-        // Grid (no code rn)
-        private void gridToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (isGridVisible == true)
-            {
-                isGridVisible = false;
-            }
-            else
-            {
-                isGridVisible = true;
-            }
-            graphicsPanel1.Invalidate();
-        }
-
         #endregion
 
         #region Options Menu
@@ -402,6 +409,8 @@ namespace GOLProject
                     toolStripStatusLabelGenerations.Text = "Generations = " + generations.ToString();
                 }
             }
+            toolStripStatusLabelInterval.Text = "Interval = " + timer.Interval.ToString();
+
             graphicsPanel1.Invalidate();
         }
 
@@ -472,6 +481,8 @@ namespace GOLProject
 
             generations = 0;
             toolStripStatusLabelGenerations.Text = "Generations = " + generations.ToString();
+            toolStripStatusLabelSeed.Text = "Seed = " + seed.ToString();
+            toolStripStatusLabelAlive.Text = "Alive= " + CellCount().ToString();
             graphicsPanel1.Invalidate();
         }
 
@@ -482,6 +493,7 @@ namespace GOLProject
             Randomize();
             generations = 0;
             toolStripStatusLabelGenerations.Text = "Generations = " + generations.ToString();
+            toolStripStatusLabelAlive.Text = "Alive= " + CellCount().ToString();
             graphicsPanel1.Invalidate();
 
         }
@@ -501,6 +513,23 @@ namespace GOLProject
             timer.Enabled = false;
             isToroidal = true;
         }
+
+        // Toggle Grid 
+        private void gridToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (isGridVisible == true)
+            {
+                isGridVisible = false;
+            }
+            else
+            {
+                isGridVisible = true;
+            }
+            graphicsPanel1.Invalidate();
+        }
+
+
         #endregion
+
     }
 }
