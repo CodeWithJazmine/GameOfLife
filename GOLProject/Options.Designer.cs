@@ -96,11 +96,11 @@
             // timerIntervalLabel
             // 
             this.timerIntervalLabel.AutoSize = true;
-            this.timerIntervalLabel.Location = new System.Drawing.Point(89, 23);
+            this.timerIntervalLabel.Location = new System.Drawing.Point(18, 23);
             this.timerIntervalLabel.Name = "timerIntervalLabel";
-            this.timerIntervalLabel.Size = new System.Drawing.Size(71, 13);
+            this.timerIntervalLabel.Size = new System.Drawing.Size(142, 13);
             this.timerIntervalLabel.TabIndex = 6;
-            this.timerIntervalLabel.Text = "Timer Interval";
+            this.timerIntervalLabel.Text = "Timer Interval in Milliseconds";
             // 
             // timerUpDown
             // 

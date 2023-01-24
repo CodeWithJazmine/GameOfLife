@@ -29,7 +29,6 @@ namespace GOLProject
         bool isGridVisible = true;
         bool isNeighborCountVisible = true;
         bool isToroidal = true;
-
         #endregion
 
         #region Form
@@ -44,8 +43,8 @@ namespace GOLProject
 
             // Reading Settings Properties
             graphicsPanel1.BackColor = Properties.Settings.Default.BackColor;
-            graphicsPanel1.ForeColor = Properties.Settings.Default.CellColor;
-            graphicsPanel1.ForeColor = Properties.Settings.Default.GridColor;
+            cellColor = Properties.Settings.Default.CellColor;
+            gridColor = Properties.Settings.Default.GridColor;
             timer.Interval = Properties.Settings.Default.TimerInterval;
             bool[,] scratchpad = new bool[Properties.Settings.Default.WidthSize, Properties.Settings.Default.HeightSize];
             bool[,] temp = universe;
@@ -341,306 +340,7 @@ namespace GOLProject
 
         #endregion
 
-
-        #region Color Menu Items
-        // Background Color
-        private void backColorToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            ColorDialog colorDialog = new ColorDialog();
-
-            colorDialog.Color = graphicsPanel1.BackColor;
-
-            if (DialogResult.OK == colorDialog.ShowDialog())
-            {
-                graphicsPanel1.BackColor = colorDialog.Color;
-                graphicsPanel1.Invalidate();
-            }
-
-        }
-        // Cell Color
-        private void cellColorToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            ColorDialog colorDialog = new ColorDialog();
-
-            colorDialog.Color = cellColor;
-
-            if (DialogResult.OK == colorDialog.ShowDialog())
-            {
-                cellColor = colorDialog.Color;
-                graphicsPanel1.Invalidate();
-            }
-        }
-
-        // Grid Color
-        private void gridColorToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            ColorDialog colorDialog = new ColorDialog();
-
-            colorDialog.Color = gridColor;
-
-            if (DialogResult.OK == colorDialog.ShowDialog())
-            {
-                gridColor = colorDialog.Color;
-                graphicsPanel1.Invalidate();
-            }
-        }
-
-        #endregion
-
-        #region Options Menu
-        // Options Menu
-        private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
-            Options opt = new Options();
-            opt.Interval = timer.Interval;
-            opt.UniverseWidth = universe.GetLength(0);
-            opt.UniverseHeight = universe.GetLength(1);
-
-            if (DialogResult.OK == opt.ShowDialog())
-            {
-                timer.Interval = opt.Interval;
-                if (opt.UniverseWidth != universe.GetLength(0) || opt.UniverseHeight != universe.GetLength(1))
-                {
-                    timer.Enabled = false;
-
-                    bool[,] scratchpad = new bool[opt.UniverseWidth, opt.UniverseHeight];
-                    bool[,] temp = universe;
-                    universe = scratchpad;
-                    scratchpad = temp;
-
-                    generations = 0;
-                    toolStripStatusLabelGenerations.Text = "Generations = " + generations.ToString();
-                }
-            }
-            toolStripStatusLabelInterval.Text = "Interval = " + timer.Interval.ToString();
-
-            graphicsPanel1.Invalidate();
-        }
-
-        #endregion
-
-        #region Randomize Menu
-
-        // Randomize() --- Default Constructor
-        private void Randomize()
-        {
-            Random rnd = new Random();
-
-            for (int y = 0; y < universe.GetLength(1); y++)
-            {
-                for (int x = 0; x < universe.GetLength(0); x++)
-                {
-                    int num = rnd.Next(0, 2);
-                    if (num == 0)
-                    {
-                        universe[x, y] = true;
-                    }
-                    else
-                    {
-                        universe[x, y] = false;
-                    }
-                }
-            }
-            graphicsPanel1.Invalidate();
-        }
-
-        //Randomize(Int32 seed) 
-        public void Randomize(Int32 seed)
-        {
-
-            Random rnd = new Random(seed);
-
-            for (int y = 0; y < universe.GetLength(1); y++)
-            {
-                for (int x = 0; x < universe.GetLength(0); x++)
-                {
-                    int num = rnd.Next(0, 2);
-                    if (num == 0)
-                    {
-                        universe[x, y] = true;
-                    }
-                    else
-                    {
-                        universe[x, y] = false;
-                    }
-                }
-            }
-
-            graphicsPanel1.Invalidate();
-        }
-
-        // Randomize From Seed 
-        private void fromSeedToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            timer.Enabled = false;
-
-            FromSeed fromSeed = new FromSeed();
-            fromSeed.Seed = seed;
-            if (DialogResult.OK == fromSeed.ShowDialog())
-            {
-                seed = fromSeed.Seed;
-                Randomize(seed);
-            }
-
-            generations = 0;
-            toolStripStatusLabelGenerations.Text = "Generations = " + generations.ToString();
-            toolStripStatusLabelSeed.Text = "Seed = " + seed.ToString();
-            toolStripStatusLabelAlive.Text = "Alive= " + CellCount().ToString();
-            graphicsPanel1.Invalidate();
-        }
-
-        // Randomize From Time
-        private void fromTimeToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            timer.Enabled = false;
-            Randomize();
-            generations = 0;
-            toolStripStatusLabelGenerations.Text = "Generations = " + generations.ToString();
-            toolStripStatusLabelAlive.Text = "Alive= " + CellCount().ToString();
-            graphicsPanel1.Invalidate();
-
-        }
-        #endregion
-
-        #region View Menu
-
-        //Enable Finite Count Neighbors
-        private void finiteToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            timer.Enabled = false;
-            isToroidal = false;
-            graphicsPanel1.Invalidate();
-        }
-
-        //Enable Toroidal Count Neighbors
-        private void toroidalToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            timer.Enabled = false;
-            isToroidal = true;
-            graphicsPanel1.Invalidate();
-        }
-
-        // Toggle Grid 
-        private void gridToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (isGridVisible == true)
-            {
-                isGridVisible = false;
-            }
-            else
-            {
-                isGridVisible = true;
-            }
-            graphicsPanel1.Invalidate();
-        }
-
-        // Toggle Neighbor Count
-        private void neighborCountToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            if (isNeighborCountVisible == true)
-            {
-                isNeighborCountVisible = false;
-            }
-            else
-            {
-                isNeighborCountVisible = true;
-            }
-            graphicsPanel1.Invalidate();
-        }
-
-        // Toggle HUD
-        private void hUDToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            if (isHUDVisible == true)
-            {
-                isHUDVisible = false;
-            }
-            else
-            {
-                isHUDVisible = true;
-            }
-            graphicsPanel1.Invalidate();
-        }
-
-        #endregion
-
-        #region Settings
-        // Saves any changes made to Back, Cell, Grid, Interval, and Universe
-        private void Form1_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            // Update Settings Properties
-            Properties.Settings.Default.BackColor = graphicsPanel1.BackColor;
-            Properties.Settings.Default.CellColor = graphicsPanel1.ForeColor;
-            Properties.Settings.Default.GridColor = graphicsPanel1.ForeColor;
-            Properties.Settings.Default.TimerInterval = timer.Interval;
-            Properties.Settings.Default.WidthSize = universe.GetLength(0);
-            Properties.Settings.Default.HeightSize = universe.GetLength(1);
-
-            // Save Settings
-            Properties.Settings.Default.Save();
-        }
-
-        // Reload to last saved settings
-        private void reloadToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Properties.Settings.Default.Reload();
-
-            graphicsPanel1.BackColor = Properties.Settings.Default.BackColor;
-            graphicsPanel1.ForeColor = Properties.Settings.Default.CellColor;
-            graphicsPanel1.ForeColor = Properties.Settings.Default.GridColor;
-            timer.Interval = Properties.Settings.Default.TimerInterval;
-            bool[,] scratchpad = new bool[Properties.Settings.Default.WidthSize, Properties.Settings.Default.HeightSize];
-            bool[,] temp = universe;
-            universe = scratchpad;
-            scratchpad = temp;
-        }
-
-        // Reset to DEFAULT settings
-        private void resetToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Properties.Settings.Default.Reset();
-
-            graphicsPanel1.BackColor = Properties.Settings.Default.BackColor;
-            graphicsPanel1.ForeColor = Properties.Settings.Default.CellColor;
-            graphicsPanel1.ForeColor = Properties.Settings.Default.GridColor;
-            timer.Interval = Properties.Settings.Default.TimerInterval;
-            bool[,] scratchpad = new bool[Properties.Settings.Default.WidthSize, Properties.Settings.Default.HeightSize];
-            bool[,] temp = universe;
-            universe = scratchpad;
-            scratchpad = temp;
-        }
-        #endregion
-
-        #region Run menu Items / File Menu Items
-
-        // Exit
-        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            this.Close();
-        }
-
-        // Start
-        private void toolStripButton1_Click(object sender, EventArgs e)
-        {
-            timer.Enabled = true;
-            graphicsPanel1.Invalidate();
-        }
-
-        // Pause
-        private void toolStripButton2_Click(object sender, EventArgs e)
-        {
-            timer.Enabled = false;
-            graphicsPanel1.Invalidate();
-        }
-
-        // Next Generation
-        private void toolStripButton3_Click(object sender, EventArgs e)
-        {
-            NextGeneration();
-            graphicsPanel1.Invalidate();
-        }
-
+        #region File Menu 
         // New/Reset
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -677,7 +377,8 @@ namespace GOLProject
                 // Prefix all comment strings with an exclamation point.
                 // Use WriteLine to write the strings to the file. 
                 // It appends a CRLF for you.
-                writer.WriteLine("!This is my comment.");
+                writer.WriteLine("!This is the coolest GOL pattern ever");
+                writer.WriteLine($"!Saved on: {DateTime.Now.ToString()}");
 
                 // Iterate through the universe one row at a time.
                 for (int y = 0; y < universe.GetLength(1); y++)
@@ -808,6 +509,310 @@ namespace GOLProject
             }
         }
 
+        // Exit
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+        #endregion
+
+        #region View Menu
+
+        //Enable Finite Count Neighbors
+        private void finiteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            timer.Enabled = false;
+            isToroidal = false;
+            graphicsPanel1.Invalidate();
+        }
+
+        //Enable Toroidal Count Neighbors
+        private void toroidalToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            timer.Enabled = false;
+            isToroidal = true;
+            graphicsPanel1.Invalidate();
+        }
+
+        // Toggle Grid 
+        private void gridToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (isGridVisible == true)
+            {
+                isGridVisible = false;
+            }
+            else
+            {
+                isGridVisible = true;
+            }
+            graphicsPanel1.Invalidate();
+        }
+
+        // Toggle Neighbor Count
+        private void neighborCountToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            if (isNeighborCountVisible == true)
+            {
+                isNeighborCountVisible = false;
+            }
+            else
+            {
+                isNeighborCountVisible = true;
+            }
+            graphicsPanel1.Invalidate();
+        }
+
+        // Toggle HUD
+        private void hUDToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            if (isHUDVisible == true)
+            {
+                isHUDVisible = false;
+            }
+            else
+            {
+                isHUDVisible = true;
+            }
+            graphicsPanel1.Invalidate();
+        }
+
+        #endregion
+
+        #region Run Menu 
+
+        // Start
+        private void toolStripButton1_Click(object sender, EventArgs e)
+        {
+            timer.Enabled = true;
+            graphicsPanel1.Invalidate();
+        }
+
+        // Pause
+        private void toolStripButton2_Click(object sender, EventArgs e)
+        {
+            timer.Enabled = false;
+            graphicsPanel1.Invalidate();
+        }
+
+        // Next Generation
+        private void toolStripButton3_Click(object sender, EventArgs e)
+        {
+            NextGeneration();
+            graphicsPanel1.Invalidate();
+        }
+
+        #endregion
+
+        #region Randomize Menu
+
+        // Randomize() --- Default Constructor
+        private void Randomize()
+        {
+            Random rnd = new Random();
+
+            for (int y = 0; y < universe.GetLength(1); y++)
+            {
+                for (int x = 0; x < universe.GetLength(0); x++)
+                {
+                    int num = rnd.Next(0, 2);
+                    if (num == 0)
+                    {
+                        universe[x, y] = true;
+                    }
+                    else
+                    {
+                        universe[x, y] = false;
+                    }
+                }
+            }
+            graphicsPanel1.Invalidate();
+        }
+
+        //Randomize(Int32 seed) 
+        public void Randomize(Int32 seed)
+        {
+
+            Random rnd = new Random(seed);
+
+            for (int y = 0; y < universe.GetLength(1); y++)
+            {
+                for (int x = 0; x < universe.GetLength(0); x++)
+                {
+                    int num = rnd.Next(0, 2);
+                    if (num == 0)
+                    {
+                        universe[x, y] = true;
+                    }
+                    else
+                    {
+                        universe[x, y] = false;
+                    }
+                }
+            }
+
+            graphicsPanel1.Invalidate();
+        }
+
+        // Randomize From Seed 
+        private void fromSeedToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            timer.Enabled = false;
+
+            FromSeed fromSeed = new FromSeed();
+            fromSeed.Seed = seed;
+            if (DialogResult.OK == fromSeed.ShowDialog())
+            {
+                seed = fromSeed.Seed;
+                Randomize(seed);
+            }
+
+            generations = 0;
+            toolStripStatusLabelGenerations.Text = "Generations = " + generations.ToString();
+            toolStripStatusLabelSeed.Text = "Seed = " + seed.ToString();
+            toolStripStatusLabelAlive.Text = "Alive= " + CellCount().ToString();
+            graphicsPanel1.Invalidate();
+        }
+
+        // Randomize From Time
+        private void fromTimeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            timer.Enabled = false;
+            Randomize();
+            generations = 0;
+            toolStripStatusLabelGenerations.Text = "Generations = " + generations.ToString();
+            toolStripStatusLabelAlive.Text = "Alive= " + CellCount().ToString();
+            graphicsPanel1.Invalidate();
+
+        }
+        #endregion
+
+        #region Color Menu
+        // Background Color
+        private void backColorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ColorDialog colorDialog = new ColorDialog();
+
+            colorDialog.Color = graphicsPanel1.BackColor;
+
+            if (DialogResult.OK == colorDialog.ShowDialog())
+            {
+                graphicsPanel1.BackColor = colorDialog.Color;
+                graphicsPanel1.Invalidate();
+            }
+
+        }
+        // Cell Color
+        private void cellColorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ColorDialog colorDialog = new ColorDialog();
+
+            colorDialog.Color = cellColor;
+
+            if (DialogResult.OK == colorDialog.ShowDialog())
+            {
+                cellColor = colorDialog.Color;
+                graphicsPanel1.Invalidate();
+            }
+        }
+
+        // Grid Color
+        private void gridColorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ColorDialog colorDialog = new ColorDialog();
+
+            colorDialog.Color = gridColor;
+
+            if (DialogResult.OK == colorDialog.ShowDialog())
+            {
+                gridColor = colorDialog.Color;
+                graphicsPanel1.Invalidate();
+            }
+        }
+
+        #endregion
+
+        #region Options Menu
+        // Options Menu
+        private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Options opt = new Options();
+            opt.Interval = timer.Interval;
+            opt.UniverseWidth = universe.GetLength(0);
+            opt.UniverseHeight = universe.GetLength(1);
+
+            if (DialogResult.OK == opt.ShowDialog())
+            {
+                timer.Interval = opt.Interval;
+                if (opt.UniverseWidth != universe.GetLength(0) || opt.UniverseHeight != universe.GetLength(1))
+                {
+                    timer.Enabled = false;
+
+                    bool[,] scratchpad = new bool[opt.UniverseWidth, opt.UniverseHeight];
+                    bool[,] temp = universe;
+                    universe = scratchpad;
+                    scratchpad = temp;
+
+                    generations = 0;
+                    toolStripStatusLabelGenerations.Text = "Generations = " + generations.ToString();
+                }
+            }
+            toolStripStatusLabelInterval.Text = "Interval = " + timer.Interval.ToString();
+
+            graphicsPanel1.Invalidate();
+        }
+
+        #endregion
+
+        #region Settings
+
+        // Saves any changes made to Back, Cell, and Grid Colors, Interval, and Universe
+        private void Form1_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            // Update Settings Properties
+            Properties.Settings.Default.BackColor = graphicsPanel1.BackColor;
+            Properties.Settings.Default.CellColor = cellColor;
+            Properties.Settings.Default.GridColor = gridColor;
+            Properties.Settings.Default.TimerInterval = timer.Interval;
+            Properties.Settings.Default.WidthSize = universe.GetLength(0);
+            Properties.Settings.Default.HeightSize = universe.GetLength(1);
+
+            // Save Settings
+            Properties.Settings.Default.Save();
+        }
+
+        // Reload to last saved settings
+        private void reloadToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.Reload();
+
+            graphicsPanel1.BackColor = Properties.Settings.Default.BackColor;
+            cellColor = Properties.Settings.Default.CellColor;
+            gridColor = Properties.Settings.Default.GridColor;
+            timer.Interval = Properties.Settings.Default.TimerInterval;
+            bool[,] scratchpad = new bool[Properties.Settings.Default.WidthSize, Properties.Settings.Default.HeightSize];
+            bool[,] temp = universe;
+            universe = scratchpad;
+            scratchpad = temp;
+
+            graphicsPanel1.Invalidate();
+        }
+
+        // Reset to default settings
+        private void resetToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.Reset();
+
+            graphicsPanel1.BackColor = Properties.Settings.Default.BackColor;
+            cellColor = Properties.Settings.Default.CellColor;
+            gridColor = Properties.Settings.Default.GridColor;
+            timer.Interval = Properties.Settings.Default.TimerInterval;
+            bool[,] scratchpad = new bool[Properties.Settings.Default.WidthSize, Properties.Settings.Default.HeightSize];
+            bool[,] temp = universe;
+            universe = scratchpad;
+            scratchpad = temp;
+
+            graphicsPanel1.Invalidate();
+        }
         #endregion
     }
 
