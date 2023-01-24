@@ -51,6 +51,8 @@ namespace GOLProject
             universe = scratchpad;
             scratchpad = temp;
 
+
+
         }
         #endregion
 
@@ -111,7 +113,6 @@ namespace GOLProject
             universe = scratchpad;
             scratchpad = temp;
 
-
             // Increment generation count
             generations++;
 
@@ -160,6 +161,7 @@ namespace GOLProject
             hudFormat.Alignment = StringAlignment.Near;
             hudFormat.LineAlignment = StringAlignment.Far;
 
+
             // Iterate through the universe in the y, top to bottom
             for (int y = 0; y < universe.GetLength(1); y++)
             {
@@ -168,16 +170,13 @@ namespace GOLProject
                 {
 
                     int count;
-                    string boundaryType;
                     if (isToroidal)
                     {
                         count = CountNeighborsToroidal(x, y);
-                        boundaryType = "Toroidal";
                     }
                     else
                     {
                         count = CountNeighborsFinite(x, y);
-                        boundaryType = "Finite";
                     }
 
                     // A rectangle to represent each cell in pixels
@@ -205,15 +204,27 @@ namespace GOLProject
                         e.Graphics.DrawString(count.ToString(), font, Brushes.Black, cellRect, stringFormat);
                     }
 
-                    // Display HUD
-                    string hud = $"Generation: {generations}\nCell count: {CellCount()}\nBoundary Type: {boundaryType}\nUniverse Size:[Width: {universe.GetLength(0)} Height:{universe.GetLength(1)}]";
-                    if (isHUDVisible == true)
-                    {
-                        e.Graphics.DrawString(hud, hudFont, Brushes.ForestGreen, graphicsPanel1.ClientRectangle, hudFormat);
-                    }
                 }
             }
 
+            //Find boundary type for HUD
+            string boundaryType;
+            if (isToroidal)
+            {
+                boundaryType = "Toroidal";
+            }
+            else
+            {
+                boundaryType = "Finite";
+            }
+            // Draw HUD
+            string hud = $"Generation: {generations}\nCell count: {CellCount()}\nBoundary Type: {boundaryType}\nUniverse Size:[Width: {universe.GetLength(0)} Height:{universe.GetLength(1)}]";
+            if (isHUDVisible == true)
+            {
+                e.Graphics.DrawString(hud, hudFont, Brushes.ForestGreen, graphicsPanel1.ClientRectangle, hudFormat);
+            }
+
+            //Update/Display Interval
             toolStripStatusLabelInterval.Text = "Interval = " + timer.Interval.ToString();
 
             // Cleaning up pens and brushes
@@ -743,6 +754,8 @@ namespace GOLProject
             if (DialogResult.OK == opt.ShowDialog())
             {
                 timer.Interval = opt.Interval;
+
+                //If the universe dimensions change
                 if (opt.UniverseWidth != universe.GetLength(0) || opt.UniverseHeight != universe.GetLength(1))
                 {
                     timer.Enabled = false;
