@@ -44,7 +44,7 @@ namespace GOLProject
             // Reading Settings Properties
             graphicsPanel1.BackColor = Properties.Settings.Default.BackColor;
             graphicsPanel1.ForeColor = Properties.Settings.Default.CellColor;
-            graphicsPanel1.ForeColor = Properties.Settings.Default.GridColor;
+            graphicsPanel1.BackColor = Properties.Settings.Default.GridColor;
             timer.Interval = Properties.Settings.Default.TimerInterval;
             bool[,] scratchpad = new bool[Properties.Settings.Default.WidthSize, Properties.Settings.Default.HeightSize];
             bool[,] temp = universe;
@@ -612,6 +612,10 @@ namespace GOLProject
             graphicsPanel1.Invalidate();
         }
 
+        #endregion
+
+        #region Settings
+        // Settings 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
             // Update Settings Properties
@@ -625,7 +629,35 @@ namespace GOLProject
             // Save Settings
             Properties.Settings.Default.Save();
         }
+
+        private void reloadToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.Reload();
+
+            graphicsPanel1.BackColor = Properties.Settings.Default.BackColor;
+            graphicsPanel1.ForeColor = Properties.Settings.Default.CellColor;
+            graphicsPanel1.ForeColor = Properties.Settings.Default.GridColor;
+            timer.Interval = Properties.Settings.Default.TimerInterval;
+            bool[,] scratchpad = new bool[Properties.Settings.Default.WidthSize, Properties.Settings.Default.HeightSize];
+            bool[,] temp = universe;
+            universe = scratchpad;
+            scratchpad = temp;
+        }
+
+        private void resetToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.Reset();
+
+            graphicsPanel1.BackColor = Properties.Settings.Default.BackColor;
+            graphicsPanel1.ForeColor = Properties.Settings.Default.CellColor;
+            graphicsPanel1.BackColor = Properties.Settings.Default.GridColor;
+            timer.Interval = Properties.Settings.Default.TimerInterval;
+            bool[,] scratchpad = new bool[Properties.Settings.Default.WidthSize, Properties.Settings.Default.HeightSize];
+            bool[,] temp = universe;
+            universe = scratchpad;
+            scratchpad = temp;
+        }
+        #endregion
     }
 
-    #endregion
 }
