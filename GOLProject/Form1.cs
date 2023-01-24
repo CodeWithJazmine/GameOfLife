@@ -22,6 +22,11 @@ namespace GOLProject
 
         // Default seed
         int seed = 70122;
+
+        bool isHUDVisible = true;
+
+        bool isToroidal = false;
+
         #endregion
 
         #region Form
@@ -43,11 +48,21 @@ namespace GOLProject
             // The scratchpad array
             bool[,] scratchpad = new bool[universe.GetLength(0), universe.GetLength(1)];
 
+
             for (int y = 0; y < universe.GetLength(1); y++)
             {
                 for (int x = 0; x < universe.GetLength(0); x++)
                 {
-                    int count = CountNeighborsFinite(x, y);
+                    int count;
+                    if (isToroidal)
+                    {
+                        count = CountNeighborsToroidal(x, y);
+                    }
+                    else
+                    {
+                        count = CountNeighborsFinite(x, y);
+                    }
+
                     if (universe[x, y] == true && count < 2)
                     {
                         scratchpad[x, y] = universe[x, y];
@@ -214,6 +229,7 @@ namespace GOLProject
             int count = 0;
             int xLen = universe.GetLength(0);
             int yLen = universe.GetLength(1);
+
             for (int yOffset = -1; yOffset <= 1; yOffset++)
             {
                 for (int xOffset = -1; xOffset <= 1; xOffset++)
@@ -225,18 +241,18 @@ namespace GOLProject
                         continue;
                     // if xCheck is less than 0 then set to xLen - 1
                     if (xCheck < 0)
-                        xLen -= 1;
+                        xCheck = xLen - 1;
                     // if yCheck is less than 0 then set to yLen - 1
                     if (yCheck < 0)
-                        yLen -= 1;
+                        yCheck = yLen - 1;
                     // if xCheck is greater than or equal too xLen then set to 0
                     if (xCheck >= xLen)
-                        xLen = 0;
+                        xCheck = 0;
                     // if yCheck is greater than or equal too yLen then set to 0
                     if (yCheck >= yLen)
-                        yLen = 0;
-
-                    if (universe[xCheck, yCheck] == true) count++;
+                        yCheck = 0;
+                    if (universe[xCheck, yCheck] == true)
+                        count++;
                 }
             }
             return count;
@@ -455,5 +471,17 @@ namespace GOLProject
 
         }
         #endregion
+
+        private void finiteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            timer.Enabled = false;
+            isToroidal = false;
+        }
+
+        private void toroidalToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            timer.Enabled = false;
+            isToroidal = true;
+        }
     }
 }
