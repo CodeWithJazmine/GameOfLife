@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 
 namespace GOLProject
@@ -44,7 +45,7 @@ namespace GOLProject
             // Reading Settings Properties
             graphicsPanel1.BackColor = Properties.Settings.Default.BackColor;
             graphicsPanel1.ForeColor = Properties.Settings.Default.CellColor;
-            graphicsPanel1.BackColor = Properties.Settings.Default.GridColor;
+            graphicsPanel1.ForeColor = Properties.Settings.Default.GridColor;
             timer.Interval = Properties.Settings.Default.TimerInterval;
             bool[,] scratchpad = new bool[Properties.Settings.Default.WidthSize, Properties.Settings.Default.HeightSize];
             bool[,] temp = universe;
@@ -340,56 +341,6 @@ namespace GOLProject
 
         #endregion
 
-        #region Exit / Run Items / New File Menu 
-
-        // Exit
-        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            this.Close();
-        }
-
-        // Start
-        private void toolStripButton1_Click(object sender, EventArgs e)
-        {
-            timer.Enabled = true;
-            graphicsPanel1.Invalidate();
-        }
-
-        // Pause
-        private void toolStripButton2_Click(object sender, EventArgs e)
-        {
-            timer.Enabled = false;
-            graphicsPanel1.Invalidate();
-        }
-
-        // Next Generation
-        private void toolStripButton3_Click(object sender, EventArgs e)
-        {
-            NextGeneration();
-            graphicsPanel1.Invalidate();
-        }
-
-        // New/Reset
-        private void newToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            timer.Enabled = false;
-
-            for (int y = 0; y < universe.GetLength(1); y++)
-            {
-                // Iterate through the universe in the x, left to right
-                for (int x = 0; x < universe.GetLength(0); x++)
-                {
-                    universe[x, y] = false;
-                }
-            }
-
-            generations = 0;
-            toolStripStatusLabelGenerations.Text = "Generations = " + generations.ToString();
-            toolStripStatusLabelAlive.Text = "Alive= " + CellCount().ToString();
-            graphicsPanel1.Invalidate();
-        }
-
-        #endregion
 
         #region Color Menu Items
         // Background Color
@@ -615,7 +566,7 @@ namespace GOLProject
         #endregion
 
         #region Settings
-        // Settings 
+        // Saves any changes made to Back, Cell, Grid, Interval, and Universe
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
             // Update Settings Properties
@@ -630,6 +581,7 @@ namespace GOLProject
             Properties.Settings.Default.Save();
         }
 
+        // Reload to last saved settings
         private void reloadToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Properties.Settings.Default.Reload();
@@ -644,19 +596,218 @@ namespace GOLProject
             scratchpad = temp;
         }
 
+        // Reset to DEFAULT settings
         private void resetToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Properties.Settings.Default.Reset();
 
             graphicsPanel1.BackColor = Properties.Settings.Default.BackColor;
             graphicsPanel1.ForeColor = Properties.Settings.Default.CellColor;
-            graphicsPanel1.BackColor = Properties.Settings.Default.GridColor;
+            graphicsPanel1.ForeColor = Properties.Settings.Default.GridColor;
             timer.Interval = Properties.Settings.Default.TimerInterval;
             bool[,] scratchpad = new bool[Properties.Settings.Default.WidthSize, Properties.Settings.Default.HeightSize];
             bool[,] temp = universe;
             universe = scratchpad;
             scratchpad = temp;
         }
+        #endregion
+
+        #region Run menu Items / File Menu Items
+
+        // Exit
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        // Start
+        private void toolStripButton1_Click(object sender, EventArgs e)
+        {
+            timer.Enabled = true;
+            graphicsPanel1.Invalidate();
+        }
+
+        // Pause
+        private void toolStripButton2_Click(object sender, EventArgs e)
+        {
+            timer.Enabled = false;
+            graphicsPanel1.Invalidate();
+        }
+
+        // Next Generation
+        private void toolStripButton3_Click(object sender, EventArgs e)
+        {
+            NextGeneration();
+            graphicsPanel1.Invalidate();
+        }
+
+        // New/Reset
+        private void newToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            timer.Enabled = false;
+
+            for (int y = 0; y < universe.GetLength(1); y++)
+            {
+                // Iterate through the universe in the x, left to right
+                for (int x = 0; x < universe.GetLength(0); x++)
+                {
+                    universe[x, y] = false;
+                }
+            }
+
+            generations = 0;
+            toolStripStatusLabelGenerations.Text = "Generations = " + generations.ToString();
+            toolStripStatusLabelAlive.Text = "Alive= " + CellCount().ToString();
+            graphicsPanel1.Invalidate();
+        }
+
+        // Save file
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog dlg = new SaveFileDialog();
+            dlg.Filter = "All Files|*.*|Cells|*.cells";
+            dlg.FilterIndex = 2; dlg.DefaultExt = "cells";
+
+
+            if (DialogResult.OK == dlg.ShowDialog())
+            {
+                StreamWriter writer = new StreamWriter(dlg.FileName);
+
+                // Write any comments you want to include first.
+                // Prefix all comment strings with an exclamation point.
+                // Use WriteLine to write the strings to the file. 
+                // It appends a CRLF for you.
+                writer.WriteLine("!This is my comment.");
+
+                // Iterate through the universe one row at a time.
+                for (int y = 0; y < universe.GetLength(1); y++)
+                {
+                    // Create a string to represent the current row.
+                    String currentRow = string.Empty;
+
+                    // Iterate through the current row one cell at a time.
+                    for (int x = 0; x < universe.GetLength(0); x++)
+                    {
+                        // If the universe[x,y] is alive then append 'O' (capital O)
+                        // to the row string.
+
+                        // Else if the universe[x,y] is dead then append '.' (period)
+                        // to the row string.
+                        if (universe[x, y] == true)
+                        {
+                            currentRow += "O";
+                        }
+                        else
+                        {
+                            currentRow += ".";
+                        }
+                    }
+
+                    // Once the current row has been read through and the 
+                    // string constructed then write it to the file using WriteLine.
+                    writer.WriteLine(currentRow);
+                }
+
+                // After all rows and columns have been written then close the file.
+                writer.Close();
+            }
+        }
+
+        // Open file
+        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog dlg = new OpenFileDialog();
+            dlg.Filter = "All Files|*.*|Cells|*.cells";
+            dlg.FilterIndex = 2;
+
+            if (DialogResult.OK == dlg.ShowDialog())
+            {
+                StreamReader reader = new StreamReader(dlg.FileName);
+
+                // Create a couple variables to calculate the width and height
+                // of the data in the file.
+                int maxWidth = 0;
+                int maxHeight = 0;
+
+                // Iterate through the file once to get its size.
+                while (!reader.EndOfStream)
+                {
+                    // Read one row at a time.
+                    string row = reader.ReadLine();
+
+                    // If the row begins with '!' then it is a comment
+                    // and should be ignored.
+                    if (row.StartsWith("!"))
+                    {
+                        continue;
+                    }
+                    // If the row is not a comment then it is a row of cells.
+                    // Increment the maxHeight variable for each row read.
+                    else
+                    {
+                        maxHeight++;
+                        // Get the length of the current row string
+                        // and adjust the maxWidth variable if necessary.
+                        maxWidth = row.Length;
+                    }
+                }
+
+                // Resize the current universe and scratchPad
+                // to the width and height of the file calculated above.
+                bool[,] scratchpad = new bool[maxWidth, maxHeight];
+                bool[,] temp = universe;
+                universe = scratchpad;
+                scratchpad = temp;
+
+                // Reset the file pointer back to the beginning of the file.
+                reader.BaseStream.Seek(0, SeekOrigin.Begin);
+
+                // y Position for Universe
+                int yPos = 0;
+
+                // Iterate through the file again, this time reading in the cells.
+                while (!reader.EndOfStream)
+                {
+                    // Read one row at a time.
+                    string row = reader.ReadLine();
+
+                    // If the row begins with '!' then
+                    // it is a comment and should be ignored.
+                    if (row.StartsWith("!"))
+                    {
+                        continue;
+                    }
+
+
+                    // If the row is not a comment then 
+                    // it is a row of cells and needs to be iterated through.
+                    for (int xPos = 0; xPos < row.Length; xPos++)
+                    {
+
+
+                        // If row[xPos] is a 'O' (capital O) then
+                        // set the corresponding cell in the universe to alive.
+                        if (row[xPos] == 'O')
+                        {
+                            universe[xPos, yPos] = true;
+                        }
+
+                        // If row[xPos] is a '.' (period) then
+                        // set the corresponding cell in the universe to dead.
+                        if (row[xPos] == '.')
+                        {
+                            universe[xPos, yPos] = false;
+                        }
+                    }
+                    yPos++;
+                }
+
+                graphicsPanel1.Invalidate();
+                // Close the file.
+                reader.Close();
+            }
+        }
+
         #endregion
     }
 
