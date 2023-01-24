@@ -25,6 +25,7 @@ namespace GOLProject
 
         bool isHUDVisible = true;
         bool isGridVisible = true;
+        bool isNeighborCountVisible = true;
 
         bool isToroidal = false;
 
@@ -88,6 +89,8 @@ namespace GOLProject
                     {
                         scratchpad[x, y] = false;
                     }
+
+
                 }
             }
 
@@ -129,9 +132,17 @@ namespace GOLProject
             // A Pen for drawing the grid lines (color, width)
             Pen gridPen = new Pen(gridColor, 1);
 
-
             // A Brush for filling living cells interiors (color)
             Brush cellBrush = new SolidBrush(cellColor);
+
+            // Font for neighbor count
+            Font font = new Font("Courier New", 8f);
+
+            StringFormat stringFormat = new StringFormat();
+            stringFormat.Alignment = StringAlignment.Center;
+            stringFormat.LineAlignment = StringAlignment.Center;
+
+
 
             // Iterate through the universe in the y, top to bottom
             for (int y = 0; y < universe.GetLength(1); y++)
@@ -139,10 +150,18 @@ namespace GOLProject
                 // Iterate through the universe in the x, left to right
                 for (int x = 0; x < universe.GetLength(0); x++)
                 {
+
+                    int count;
+                    if (isToroidal)
+                    {
+                        count = CountNeighborsToroidal(x, y);
+                    }
+                    else
+                    {
+                        count = CountNeighborsFinite(x, y);
+                    }
+
                     // A rectangle to represent each cell in pixels
-
-                    //CHANGE TO RectangleF
-
                     RectangleF cellRect = RectangleF.Empty;
                     cellRect.X = x * cellWidth;
                     cellRect.Y = y * cellHeight;
@@ -162,6 +181,12 @@ namespace GOLProject
                     }
                     else
                     { continue; }
+
+                    // Write neighbor count
+                    if (isNeighborCountVisible == true && count != 0)
+                    {
+                        e.Graphics.DrawString(count.ToString(), font, Brushes.Black, cellRect, stringFormat);
+                    }
                 }
             }
 
@@ -528,8 +553,20 @@ namespace GOLProject
             graphicsPanel1.Invalidate();
         }
 
-
-        #endregion
-
+        // Toggle Neighbor Count
+        private void neighborCountToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            if (isNeighborCountVisible == true)
+            {
+                isNeighborCountVisible = false;
+            }
+            else
+            {
+                isNeighborCountVisible = true;
+            }
+            graphicsPanel1.Invalidate();
+        }
     }
+
+    #endregion
 }
