@@ -358,10 +358,18 @@ namespace GOLProject
             if (DialogResult.OK == opt.ShowDialog())
             {
                 timer.Interval = opt.Interval;
-                bool[,] scratchpad = new bool[opt.UniverseWidth, opt.UniverseHeight];
-                bool[,] temp = universe;
-                universe = scratchpad;
-                scratchpad = temp;
+                if (opt.UniverseWidth != universe.GetLength(0) || opt.UniverseHeight != universe.GetLength(1))
+                {
+                    timer.Enabled = false;
+
+                    bool[,] scratchpad = new bool[opt.UniverseWidth, opt.UniverseHeight];
+                    bool[,] temp = universe;
+                    universe = scratchpad;
+                    scratchpad = temp;
+
+                    generations = 0;
+                    toolStripStatusLabelGenerations.Text = "Generations = " + generations.ToString();
+                }
             }
             graphicsPanel1.Invalidate();
         }
@@ -396,6 +404,7 @@ namespace GOLProject
         //Randomize(Int32 seed) 
         public void Randomize(Int32 seed)
         {
+
             Random rnd = new Random(seed);
 
             for (int y = 0; y < universe.GetLength(1); y++)
@@ -413,12 +422,14 @@ namespace GOLProject
                     }
                 }
             }
+
             graphicsPanel1.Invalidate();
         }
 
         // Randomize From Seed 
         private void fromSeedToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            timer.Enabled = false;
 
             FromSeed fromSeed = new FromSeed();
             fromSeed.Seed = seed;
@@ -427,13 +438,21 @@ namespace GOLProject
                 seed = fromSeed.Seed;
                 Randomize(seed);
             }
+
+            generations = 0;
+            toolStripStatusLabelGenerations.Text = "Generations = " + generations.ToString();
             graphicsPanel1.Invalidate();
         }
 
         // Randomize From Time
         private void fromTimeToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            timer.Enabled = false;
             Randomize();
+            generations = 0;
+            toolStripStatusLabelGenerations.Text = "Generations = " + generations.ToString();
+            graphicsPanel1.Invalidate();
+
         }
         #endregion
     }
