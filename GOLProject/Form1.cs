@@ -23,6 +23,7 @@ namespace GOLProject
         // Default seed
         int seed = 70122;
 
+
         bool isHUDVisible = true;
         bool isGridVisible = true;
         bool isNeighborCountVisible = true;
@@ -135,14 +136,17 @@ namespace GOLProject
             // A Brush for filling living cells interiors (color)
             Brush cellBrush = new SolidBrush(cellColor);
 
-            // Font for neighbor count
-            Font font = new Font("Courier New", 8f);
+            // Font for neighbor count & HUD
 
+            Font font = new Font("Courier New", 8f);
             StringFormat stringFormat = new StringFormat();
             stringFormat.Alignment = StringAlignment.Center;
             stringFormat.LineAlignment = StringAlignment.Center;
 
-
+            Font hudFont = new Font("Century Gothic", 15f);
+            StringFormat hudFormat = new StringFormat();
+            hudFormat.Alignment = StringAlignment.Near;
+            hudFormat.LineAlignment = StringAlignment.Far;
 
             // Iterate through the universe in the y, top to bottom
             for (int y = 0; y < universe.GetLength(1); y++)
@@ -152,13 +156,16 @@ namespace GOLProject
                 {
 
                     int count;
+                    string boundaryType;
                     if (isToroidal)
                     {
                         count = CountNeighborsToroidal(x, y);
+                        boundaryType = "Toroidal";
                     }
                     else
                     {
                         count = CountNeighborsFinite(x, y);
+                        boundaryType = "Finite";
                     }
 
                     // A rectangle to represent each cell in pixels
@@ -186,6 +193,13 @@ namespace GOLProject
                     if (isNeighborCountVisible == true && count != 0)
                     {
                         e.Graphics.DrawString(count.ToString(), font, Brushes.Black, cellRect, stringFormat);
+                    }
+
+                    // Display HUD
+                    string hud = $"Generation: {generations}\nCell count: {CellCount()}\nBoundary Type: {boundaryType}\nUniverse Size:[Width: {universe.GetLength(0)} Height:{universe.GetLength(1)}]";
+                    if (isHUDVisible == true)
+                    {
+                        e.Graphics.DrawString(hud, hudFont, Brushes.ForestGreen, graphicsPanel1.ClientRectangle, hudFormat);
                     }
                 }
             }
@@ -530,6 +544,7 @@ namespace GOLProject
         {
             timer.Enabled = false;
             isToroidal = false;
+            graphicsPanel1.Invalidate();
         }
 
         //Enable Toroidal Count Neighbors
@@ -537,6 +552,7 @@ namespace GOLProject
         {
             timer.Enabled = false;
             isToroidal = true;
+            graphicsPanel1.Invalidate();
         }
 
         // Toggle Grid 
@@ -563,6 +579,20 @@ namespace GOLProject
             else
             {
                 isNeighborCountVisible = true;
+            }
+            graphicsPanel1.Invalidate();
+        }
+
+        // Toggle HUD
+        private void hUDToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            if (isHUDVisible == true)
+            {
+                isHUDVisible = false;
+            }
+            else
+            {
+                isHUDVisible = true;
             }
             graphicsPanel1.Invalidate();
         }
