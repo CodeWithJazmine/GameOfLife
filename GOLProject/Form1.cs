@@ -24,6 +24,7 @@ namespace GOLProject
         int seed = 70122;
 
         bool isHUDVisible = true;
+        bool isGridVisible = true;
 
         bool isToroidal = false;
 
@@ -127,6 +128,7 @@ namespace GOLProject
             // A Pen for drawing the grid lines (color, width)
             Pen gridPen = new Pen(gridColor, 1);
 
+
             // A Brush for filling living cells interiors (color)
             Brush cellBrush = new SolidBrush(cellColor);
 
@@ -153,7 +155,12 @@ namespace GOLProject
                     }
 
                     // Outline the cell with a pen
-                    e.Graphics.DrawRectangle(gridPen, cellRect.X, cellRect.Y, cellRect.Width, cellRect.Height);
+                    if (isGridVisible == true)
+                    {
+                        e.Graphics.DrawRectangle(gridPen, cellRect.X, cellRect.Y, cellRect.Width, cellRect.Height);
+                    }
+                    else
+                    { continue; }
                 }
             }
 
@@ -356,7 +363,15 @@ namespace GOLProject
         // Grid (no code rn)
         private void gridToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            if (isGridVisible == true)
+            {
+                isGridVisible = false;
+            }
+            else
+            {
+                isGridVisible = true;
+            }
+            graphicsPanel1.Invalidate();
         }
 
         #endregion
@@ -472,16 +487,20 @@ namespace GOLProject
         }
         #endregion
 
+        #region View Menu
+        //Enable Finite Count Neighbors
         private void finiteToolStripMenuItem_Click(object sender, EventArgs e)
         {
             timer.Enabled = false;
             isToroidal = false;
         }
 
+        //Enable Toroidal Count Neighbors
         private void toroidalToolStripMenuItem_Click(object sender, EventArgs e)
         {
             timer.Enabled = false;
             isToroidal = true;
         }
+        #endregion
     }
 }
