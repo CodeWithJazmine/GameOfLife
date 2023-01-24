@@ -23,12 +23,11 @@ namespace GOLProject
         // Default seed
         int seed = 70122;
 
-
+        // Toggle Settings
         bool isHUDVisible = true;
         bool isGridVisible = true;
         bool isNeighborCountVisible = true;
-
-        bool isToroidal = false;
+        bool isToroidal = true;
 
         #endregion
 
@@ -41,6 +40,17 @@ namespace GOLProject
             timer.Interval = 100; // milliseconds
             timer.Tick += Timer_Tick;
             timer.Enabled = false; // start timer running
+
+            // Reading Settings Properties
+            graphicsPanel1.BackColor = Properties.Settings.Default.BackColor;
+            graphicsPanel1.ForeColor = Properties.Settings.Default.CellColor;
+            graphicsPanel1.ForeColor = Properties.Settings.Default.GridColor;
+            timer.Interval = Properties.Settings.Default.TimerInterval;
+            bool[,] scratchpad = new bool[Properties.Settings.Default.WidthSize, Properties.Settings.Default.HeightSize];
+            bool[,] temp = universe;
+            universe = scratchpad;
+            scratchpad = temp;
+
         }
         #endregion
 
@@ -56,7 +66,9 @@ namespace GOLProject
             {
                 for (int x = 0; x < universe.GetLength(0); x++)
                 {
+
                     int count;
+                    // Torodial or Finite
                     if (isToroidal)
                     {
                         count = CountNeighborsToroidal(x, y);
@@ -136,13 +148,13 @@ namespace GOLProject
             // A Brush for filling living cells interiors (color)
             Brush cellBrush = new SolidBrush(cellColor);
 
-            // Font for neighbor count & HUD
-
+            // Font for neighbor count
             Font font = new Font("Courier New", 8f);
             StringFormat stringFormat = new StringFormat();
             stringFormat.Alignment = StringAlignment.Center;
             stringFormat.LineAlignment = StringAlignment.Center;
 
+            // Font for HUD
             Font hudFont = new Font("Century Gothic", 15f);
             StringFormat hudFormat = new StringFormat();
             hudFormat.Alignment = StringAlignment.Near;
@@ -186,8 +198,6 @@ namespace GOLProject
                     {
                         e.Graphics.DrawRectangle(gridPen, cellRect.X, cellRect.Y, cellRect.Width, cellRect.Height);
                     }
-                    else
-                    { continue; }
 
                     // Write neighbor count
                     if (isNeighborCountVisible == true && count != 0)
@@ -204,9 +214,13 @@ namespace GOLProject
                 }
             }
 
+            toolStripStatusLabelInterval.Text = "Interval = " + timer.Interval.ToString();
+
             // Cleaning up pens and brushes
             gridPen.Dispose();
             cellBrush.Dispose();
+            font.Dispose();
+            hudFont.Dispose();
         }
 
         private void graphicsPanel1_MouseClick(object sender, MouseEventArgs e)
@@ -326,7 +340,7 @@ namespace GOLProject
 
         #endregion
 
-        #region Run Menu Items & New File Menu Item
+        #region Exit / Run Items / New File Menu 
 
         // Exit
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -539,6 +553,7 @@ namespace GOLProject
         #endregion
 
         #region View Menu
+
         //Enable Finite Count Neighbors
         private void finiteToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -595,6 +610,20 @@ namespace GOLProject
                 isHUDVisible = true;
             }
             graphicsPanel1.Invalidate();
+        }
+
+        private void Form1_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            // Update Settings Properties
+            Properties.Settings.Default.BackColor = graphicsPanel1.BackColor;
+            Properties.Settings.Default.CellColor = graphicsPanel1.ForeColor;
+            Properties.Settings.Default.GridColor = graphicsPanel1.ForeColor;
+            Properties.Settings.Default.TimerInterval = timer.Interval;
+            Properties.Settings.Default.WidthSize = universe.GetLength(0);
+            Properties.Settings.Default.HeightSize = universe.GetLength(1);
+
+            // Save Settings
+            Properties.Settings.Default.Save();
         }
     }
 
