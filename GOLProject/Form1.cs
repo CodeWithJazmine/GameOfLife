@@ -763,7 +763,7 @@ namespace GOLProject
 
         #endregion
 
-        #region Settings
+        #region Settings Menu
 
         // Saves any changes made to Back, Cell, and Grid Colors, Interval, and Universe
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
