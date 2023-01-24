@@ -6,10 +6,9 @@ namespace GOLProject
 {
     public partial class Form1 : Form
     {
+        #region Variables
         // The universe array
         bool[,] universe = new bool[20, 20];
-
-
 
         // Drawing colors
         Color gridColor = Color.Black;
@@ -21,6 +20,11 @@ namespace GOLProject
         // Generation count
         int generations = 0;
 
+        // Default seed
+        int seed = 70122;
+        #endregion
+
+        #region Form
         public Form1()
         {
             InitializeComponent();
@@ -30,7 +34,9 @@ namespace GOLProject
             timer.Tick += Timer_Tick;
             timer.Enabled = false; // start timer running
         }
+        #endregion
 
+        #region Next Generation
         // Calculate the next generation of cells
         private void NextGeneration()
         {
@@ -82,11 +88,16 @@ namespace GOLProject
             graphicsPanel1.Invalidate();
         }
 
+        #endregion
+
+        #region Timer
         // The event called by the timer every Interval milliseconds.
         private void Timer_Tick(object sender, EventArgs e)
         {
             NextGeneration();
         }
+
+        #endregion
 
         #region Paint Graphic's Panel
         private void graphicsPanel1_Paint(object sender, PaintEventArgs e)
@@ -233,7 +244,7 @@ namespace GOLProject
 
         #endregion
 
-        #region Buttons and Menu Items
+        #region Run Menu Items & New File Menu Item
 
         // Exit
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -334,7 +345,7 @@ namespace GOLProject
 
         #endregion
 
-        #region Option Menu
+        #region Options Menu
         // Options Menu
         private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -355,8 +366,11 @@ namespace GOLProject
             graphicsPanel1.Invalidate();
         }
 
+        #endregion
 
-        // Randomize from Time
+        #region Randomize Menu
+
+        // Randomize() --- Default Constructor
         private void Randomize()
         {
             Random rnd = new Random();
@@ -370,13 +384,17 @@ namespace GOLProject
                     {
                         universe[x, y] = true;
                     }
+                    else
+                    {
+                        universe[x, y] = false;
+                    }
                 }
             }
             graphicsPanel1.Invalidate();
         }
 
-        //Randomize from Seed
-        private void Randomize(int seed)
+        //Randomize(Int32 seed) 
+        public void Randomize(Int32 seed)
         {
             Random rnd = new Random(seed);
 
@@ -389,21 +407,34 @@ namespace GOLProject
                     {
                         universe[x, y] = true;
                     }
+                    else
+                    {
+                        universe[x, y] = false;
+                    }
                 }
             }
             graphicsPanel1.Invalidate();
         }
 
-        // From Seed Menu
+        // Randomize From Seed 
         private void fromSeedToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            FromSeed seed = new FromSeed();
 
-            if (DialogResult.OK == seed.ShowDialog())
+            FromSeed fromSeed = new FromSeed();
+            fromSeed.Seed = seed;
+            if (DialogResult.OK == fromSeed.ShowDialog())
             {
-
+                seed = fromSeed.Seed;
+                Randomize(seed);
             }
+            graphicsPanel1.Invalidate();
         }
+
+        // Randomize From Time
+        private void fromTimeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Randomize();
+        }
+        #endregion
     }
-    #endregion
 }
