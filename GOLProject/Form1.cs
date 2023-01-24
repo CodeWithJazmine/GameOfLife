@@ -9,8 +9,7 @@ namespace GOLProject
         // The universe array
         bool[,] universe = new bool[20, 20];
 
-        // The scratchpad array
-        bool[,] scratchpad = new bool[20, 20];
+
 
         // Drawing colors
         Color gridColor = Color.Black;
@@ -35,6 +34,9 @@ namespace GOLProject
         // Calculate the next generation of cells
         private void NextGeneration()
         {
+            // The scratchpad array
+            bool[,] scratchpad = new bool[universe.GetLength(0), universe.GetLength(1)];
+
             for (int y = 0; y < universe.GetLength(1); y++)
             {
                 for (int x = 0; x < universe.GetLength(0); x++)
@@ -60,20 +62,16 @@ namespace GOLProject
                         scratchpad[x, y] = universe[x, y];
                         scratchpad[x, y] = true;
                     }
+                    if (universe[x, y] == false && count != 3)
+                    {
+                        scratchpad[x, y] = false;
+                    }
                 }
             }
 
             bool[,] temp = universe;
             universe = scratchpad;
             scratchpad = temp;
-
-            for (int y = 0; y < universe.GetLength(1); y++)
-            {
-                for (int x = 0; x < universe.GetLength(0); x++)
-                {
-                    scratchpad[x, y] = false;
-                }
-            }
 
 
             // Increment generation count
@@ -90,6 +88,7 @@ namespace GOLProject
             NextGeneration();
         }
 
+        #region Paint Graphic's Panel
         private void graphicsPanel1_Paint(object sender, PaintEventArgs e)
         {
 
@@ -160,6 +159,10 @@ namespace GOLProject
             }
         }
 
+        #endregion
+
+        #region Count Neighbors
+
         // Count Neighbors Finite
         private int CountNeighborsFinite(int x, int y)
         {
@@ -228,7 +231,9 @@ namespace GOLProject
             return count;
         }
 
-        // Buttons and Menu Items
+        #endregion
+
+        #region Buttons and Menu Items
 
         // Exit
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -276,6 +281,9 @@ namespace GOLProject
             graphicsPanel1.Invalidate();
         }
 
+        #endregion
+
+        #region Color Menu Items
         // Background Color
         private void backColorToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -304,6 +312,7 @@ namespace GOLProject
             }
         }
 
+        // Grid Color
         private void gridColorToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ColorDialog colorDialog = new ColorDialog();
@@ -317,21 +326,84 @@ namespace GOLProject
             }
         }
 
-        // Grid 
+        // Grid (no code rn)
         private void gridToolStripMenuItem_Click(object sender, EventArgs e)
         {
 
         }
 
-        //Options Menu
+        #endregion
+
+        #region Option Menu
+        // Options Menu
         private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
         {
+
             Options opt = new Options();
+            opt.Interval = timer.Interval;
+            opt.UniverseWidth = universe.GetLength(0);
+            opt.UniverseHeight = universe.GetLength(1);
 
             if (DialogResult.OK == opt.ShowDialog())
+            {
+                timer.Interval = opt.Interval;
+                bool[,] scratchpad = new bool[opt.UniverseWidth, opt.UniverseHeight];
+                bool[,] temp = universe;
+                universe = scratchpad;
+                scratchpad = temp;
+            }
+            graphicsPanel1.Invalidate();
+        }
+
+
+        // Randomize from Time
+        private void Randomize()
+        {
+            Random rnd = new Random();
+
+            for (int y = 0; y < universe.GetLength(1); y++)
+            {
+                for (int x = 0; x < universe.GetLength(0); x++)
+                {
+                    int num = rnd.Next(0, 2);
+                    if (num == 0)
+                    {
+                        universe[x, y] = true;
+                    }
+                }
+            }
+            graphicsPanel1.Invalidate();
+        }
+
+        //Randomize from Seed
+        private void Randomize(int seed)
+        {
+            Random rnd = new Random(seed);
+
+            for (int y = 0; y < universe.GetLength(1); y++)
+            {
+                for (int x = 0; x < universe.GetLength(0); x++)
+                {
+                    int num = rnd.Next(0, 2);
+                    if (num == 0)
+                    {
+                        universe[x, y] = true;
+                    }
+                }
+            }
+            graphicsPanel1.Invalidate();
+        }
+
+        // From Seed Menu
+        private void fromSeedToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FromSeed seed = new FromSeed();
+
+            if (DialogResult.OK == seed.ShowDialog())
             {
 
             }
         }
     }
+    #endregion
 }
