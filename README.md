@@ -11,4 +11,4 @@ As a project for one of my classes, we were tasked to recreate Conway's Game of 
 - Dynamic-linked libraries
 - Saving and opening files
 - Reloading and Resetting application settings
-- Version Control with Git
+- Version Control
